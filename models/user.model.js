@@ -7,19 +7,29 @@ const usersSchema = db.Schema({
     nickname: {type: String, required: true},
     city: {type: String, required: true},
     headimgurl: {type: String, required: true},
-    createTime: {type: Date, default: Date.now},
+    phone: {type: String, required: false},
+    realname: {type: String, required: false},
+    createTime: {type: Date, default: Date.now}
 });
 
-const UserInfo = db.model('Users', usersSchema);
+const Users = db.model('Users', usersSchema);
 
 const save = ( data ) =>{
-    let users = new UserInfo( data );
-    return users.save().then( result => {
+    let user = new Users( data );
+    return user.save().then( result => {
         return result
     }).catch( err =>{ 
         return false
     })
 }
 
-module.exports = { save };
+const findByOpenId = ( data ) =>{
+    return Users.findOne(data).then( result => result )
+}
+
+const update = ( data ) =>{
+    return Users.findOneAndUpdate({openid: data.openid}, {realname: data.realname, phone: data.phone}).then( result => result )
+}
+
+module.exports = { save, update, findByOpenId };
 
